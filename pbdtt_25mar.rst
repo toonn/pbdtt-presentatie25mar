@@ -7,33 +7,44 @@ Toon Nolten
 
 Overzicht
 =========
+* Dependent Types
 * Totality & Turing completeness
-* DSEL
+* DSEL/EDSL: Embedded Domain-Specific Language
 
   * Cryptol
   * Relational Algebra
 
 
-Totality & Turing completeness
+Dependent Types
+===============
+
+* Types kunnen afhangen van waarden
+
+.. code-block:: agda
+
+    replicate : ∀ {A n} → A → Vec A n
+
+    _!!_ : ∀ {A n} → Fin n → Vec A n → A
+
+
+Totality & Turing Completeness
 ==============================
 
 * Talen met dependent types hebben een totality checker zodat type checking
   gegarandeerd eindigt
-* "Totale functies eindigen dus algemene recursie is niet mogelijk dus zo'n
-  taal is niet Turing compleet."
-* Totaal is niet hetzelfde als terminerend, voor functies op codata betekent
-  het productief
-* Codata laat ons toe Turing machines te simuleren, talen met dependent types
-  kunnen dus wel Turing compleet zijn
+* "Totale functies eindigen altijd dus zo'n taal is niet Turing compleet."
+* Data en Codata is genoeg om Turing compleetheid te modelleren
+
+.. * Totaal is niet hetzelfde als terminerend, voor functies op codata betekent
+   het productief
 
 
-DSEL
+EDSL
 ====
 
 * Beter geschikt voor taken in het domein
 * Gebruikers moeten een nieuwe taal leren
-* Geen nieuwe taal, bij een DSL wel
-* Alle abstracties uit de general purpose language zijn beschikbaar
+* Alle abstracties uit de host language zijn beschikbaar
 * Om een DSL te kunnen embedden moet ook het type systeem geëmbed worden,
   de meeste type systemen zijn hier niet krachtig genoeg voor
 
@@ -47,12 +58,26 @@ Cryptol
 
 .. code-block:: cryptol
 
-    x : [8]; x = 42;
+    x : [8];
+    x = 42;
+
+
+Cryptol
+=======
+
+* Een handige feature uit cryptol die in de meeste talen moeilijk uit te
+  drukken is:
 
 .. code-block:: cryptol
 
     swab : [32] -> [32];
     swab [a b  c d] = [b a c d];
+
+
+Cryptol
+=======
+
+* Hulpfuncties om de *view* in Agda te definiëren:
 
 .. code-block:: agda
 
@@ -64,6 +89,12 @@ Cryptol
     split n zero    [] = []
     split n (suc k) xs =
              (take n xs) ∷ (split n k (drop n xs))
+
+
+Cryptol
+=======
+
+.. code-block:: agda
 
     data SplitView {A : Set} : {n : ℕ} → (m : ℕ)
              → Vec A (m × n) → Set where
@@ -77,15 +108,22 @@ Cryptol
     view n m xs | .xs | v | Refl = v
 
 
+Cryptol
+=======
+
+.. code-block:: agda
+
+    swab : Word 32 → Word 32
+    swab xs with view 8 4 xs
+    swab ._ | [ a ∷ b ∷ c ∷ d ∷ [] ] =
+        concat (b ∷ a ∷ c ∷ d ∷ [])
+
+
 Relational Algebra
 ==================
 
-* Databases zijn enorm belangrijk, zo goed als alles op het internet komt uit
-  een database
-* Het is belangrijk voor een programmeertaal om een goede interface tot
-  databases te hebben
-* De meeste RDMS systemen verwachten een SQL query in een string en geven ofwel
-  een string terug, ofwel is het type van het antwoord enkel dynamisch bepaald
+* Databases zijn belangrijk
+* Het is belangrijk om een goede interface tot databases te hebben
 
 
 Relational Algebra
@@ -96,70 +134,82 @@ Bestaande interfaces
 * Een request functie die een string verwacht
 
   * Dit is unsafe, er is geen enkele vorm van statische checks
-  * Een syntactisch foute of semantisch onzinnige query leidt tot een
-    runtime error
-  * SQL is een extra taal die geleerd dient te worden
-
-* Voor Haskell zijn er verschillende voorstellen gedaan om dit te verbeteren,
-  maar
-
-  * Sommige concepten uit relationele algebra zoals *join* en
-    *cartesisch product* zijn bijzonder moeilijk te typeren
-  * Het type systeem van Haskell is niet krachtig genoeg dus zijn er vaak
-    extensies nodig die eigenlijk niet tot Haskell behoren
-  * Als de binding *safe* is, is er gewoonlijk een preprocessor nodig die
-    de types genereert voor een specifieke database
-
-* Veel van de populaire bindings geven type safety op in ruil voor een handiger
-  gebruik
+  * Syntactisch fout of semantisch onzinnige query leiden tot runtime errors
+  * SQL is een extra taal
 
 
 Relational Algebra
 ==================
-Dependently typed
+Haskell
+-------
+
+* Verschillende voorstellen om dit te verbeteren, maar
+
+  * *join* en *cartesisch product* zijn bijzonder moeilijk te typeren
+  * Type systeem niet krachtig genoeg dus extensies nodig
+  * Voor een *safe* binding gewoonlijk een preprocessor nodig
+
+* Populaire bindings geven type safety op in ruil voor handiger gebruik
+
+
+Relational Algebra
+==================
+Dependent Types
 -----------------
 
 * Volledig *safe*, dus statische garantie dat een query goed gevormd is en
-  een antwoord van het juiste type zal teruggeven (als de connectie niet
-  wegvalt...)
-* *Totally embedded*, er is dus geen enkele vorm van preprocessor nodig
-* De code is een stuk eenvoudiger dan die van de type-safe Haskell bindings
+  een antwoord van het juiste type zal teruggeven
+* *Totally embedded*, er is dus geen preprocessor nodig
+* De code is eenvoudiger dan die van de type-safe Haskell bindings
 
 
 Relational Algebra
 ==================
+Haskell
+-------
 
-* Voor we queries kunnen uitvoeren moeten we eerst verbinden met een database,
-  in Haskell gebeurt dit gewoonlijk als volgt:
+* Eerst moeten we verbinden met een database, gewoonlijk:
 
   .. code-block:: haskell
 
       connect :: ServerName -> IO Connection
 
-* Een probleem hiermee is dat het geen enkele statische garantie kan bieden
-  over het type van resultaten van queries die je uitvoert m.b.v. die Connection
-* Met dependent types kunnen we veel preciezer zijn:
+* Geen statische informatie uit verbinding
 
-  .. code-block:: Agda
+  .. Een probleem hiermee is dat het geen enkele statische garantie kan bieden
+     over het type van resultaten van queries die je uitvoert m.b.v. die
+     Connection
+
+
+Relational Algebra
+==================
+Dependent Types
+---------------
+
+* We kunnen veel preciezer zijn:
+
+  .. code-block:: agda
 
       Handle : Schema → Set
       connect : ServerName → TableName → (s : Schema)
                  → IO (Handle s)
 
-* Dit zorgt dat we statische garanties hebben over welke queries we kunnen
-  uitvoeren en wat het antwoord daarop kan zijn
+* Verbinding met een specifieke tabel met het juiste schema
+
+  .. Dit zorgt dat we statische garanties hebben over welke queries we kunnen
+     uitvoeren en wat het antwoord daarop kan zijn
   
-  * Er kan nog steeds een fout gebeuren bij het aanmaken van de verbinding,
-    als het schema niet overeenkomt met dat van de tabel
-  * Als het schema wel klopt, kan er niets misgaan met het programma
-    (het wegvallen van de verbinding, verandering van het schema in de database,
-    enz. daargelaten)
+  * Nog steeds fouten mogelijk bij het aanmaken van de verbinding
+  * Het programma kan niet mislopen
+    (wegvallen verbinding, verandering schema, enz. daargelaten)
 
 
 Relational Algebra
 ==================
+Dependent Types
+---------------
 
-.. code-block:: Agda
+.. code-block:: agda
 
     data RA : Schema → Set where
       Read : ∀ {s} → Handle s → RA s
@@ -171,6 +221,14 @@ Relational Algebra
                  → {_ : So (sub s' s)} → RA s → RA s'
       Select : ∀ {s} → Expr s BOOL → RA s → RA s
 
+
+Relational Algebra
+==================
+
+.. code-block:: agda
+
+    aquery : Handle Cars → RA Cars
+    aquery h = Select (equal (Cars ! "ModelYear") 1996) (Read h)
 
 Referenties
 ===========

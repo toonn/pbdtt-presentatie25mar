@@ -59,15 +59,21 @@ Cryptol
     Word : ℕ → Set
     Word n = Vec Bit n
 
-    split : ∀ {A} → (n : ℕ) → (m : ℕ) → Vec A (m × n) → Vec (Vec A n) m
-    split n zero [] = []
-    split n (suc k) xs = (take n xs) ∷ (split n k (drop n xs))
+    split : ∀ {A} → (n : ℕ) → (m : ℕ) → Vec A (m × n)
+             → Vec (Vec A n) m
+    split n zero    [] = []
+    split n (suc k) xs =
+             (take n xs) ∷ (split n k (drop n xs))
 
-    data SplitView {A : Set} : {n : ℕ} → (m : ℕ) → Vec A (m × n) → Set where
-      [_] : ∀ {m n} → (xss : Vec (Vec A n) m) → SplitView m (concat xss)
+    data SplitView {A : Set} : {n : ℕ} → (m : ℕ)
+             → Vec A (m × n) → Set where
+      [_] : ∀ {m n} → (xss : Vec (Vec A n) m)
+             → SplitView m (concat xss)
     
-    view : {A : Set} → (n : ℕ) → (m : ℕ) → (xs : Vec A (m × n)) → SplitView m xs
-    view n m xs with concat (split n m xs) | [split n m xs] | splitConcatLemma m xs
+    view : {A : Set} → (n : ℕ) → (m : ℕ)
+             → (xs : Vec A (m × n)) → SplitView m xs
+    view n m xs with concat (split n m xs)
+             | [split n m xs] | splitConcatLemma m xs
     view n m xs | .xs | v | Refl = v
 
 
@@ -137,7 +143,8 @@ Relational Algebra
   .. code-block:: Agda
 
       Handle : Schema → Set
-      connect : ServerName → TableName → (s : Schema) → IO (Handle s)
+      connect : ServerName → TableName → (s : Schema)
+                 → IO (Handle s)
 
 * Dit zorgt dat we statische garanties hebben over welke queries we kunnen
   uitvoeren en wat het antwoord daarop kan zijn
@@ -158,8 +165,10 @@ Relational Algebra
       Read : ∀ {s} → Handle s → RA s
       Union : ∀ {s} → RA s → RA s → RA s
       Diff : ∀ {s} → RA s → RA s → RA s
-      Product : ∀ {s s'} → {_ : So (disjoint s s')} → RA s → RA s' → RA (append s s')
-      Project : ∀ {s} → (s' : Schema) → {_ : So (sub s' s)} → RA s → RA s'
+      Product : ∀ {s s'} → {_ : So (disjoint s s')}
+                 → RA s → RA s' → RA (append s s')
+      Project : ∀ {s} → (s' : Schema)
+                 → {_ : So (sub s' s)} → RA s → RA s'
       Select : ∀ {s} → Expr s BOOL → RA s → RA s
 
 

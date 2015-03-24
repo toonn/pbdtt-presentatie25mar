@@ -65,7 +65,7 @@ Cryptol
 Cryptol
 =======
 
-* Een handige feature uit cryptol die in de meeste talen moeilijk uit te
+* Een handige feature die in de meeste talen moeilijk uit te
   drukken is:
 
 .. code-block:: cryptol
@@ -228,7 +228,8 @@ Relational Algebra
 .. code-block:: agda
 
     aquery : Handle Cars → RA Cars
-    aquery h = Select (equal (Cars ! "ModelYear") 1996) (Read h)
+    aquery h = Select (equal (Cars ! "ModelYear") 1996)
+                      (Read h)
 
 Referenties
 ===========

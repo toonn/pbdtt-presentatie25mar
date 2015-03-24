@@ -194,14 +194,20 @@ Dependent Types
       connect : ServerName → TableName → (s : Schema)
                  → IO (Handle s)
 
+
+Relational Algebra
+==================
+Dependent Types
+---------------
+
 * Verbinding met een specifieke tabel met het juiste schema
 
   .. Dit zorgt dat we statische garanties hebben over welke queries we kunnen
      uitvoeren en wat het antwoord daarop kan zijn
   
   * Nog steeds fouten mogelijk bij het aanmaken van de verbinding
-  .. Het programma kan niet mislopen
-     (wegvallen verbinding, verandering schema, enz. daargelaten)
+  * Het programma kan niet mislopen
+    (wegvallen verbinding, verandering schema, enz. daargelaten)
 
 
 Relational Algebra

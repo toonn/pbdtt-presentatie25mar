@@ -200,8 +200,8 @@ Dependent Types
      uitvoeren en wat het antwoord daarop kan zijn
   
   * Nog steeds fouten mogelijk bij het aanmaken van de verbinding
-  * Het programma kan niet mislopen
-    (wegvallen verbinding, verandering schema, enz. daargelaten)
+  .. Het programma kan niet mislopen
+     (wegvallen verbinding, verandering schema, enz. daargelaten)
 
 
 Relational Algebra

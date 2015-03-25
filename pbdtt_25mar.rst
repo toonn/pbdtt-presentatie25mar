@@ -170,9 +170,9 @@ Haskell
 
 * Eerst moeten we verbinden met een database, gewoonlijk:
 
-  .. code-block:: haskell
+.. code-block:: haskell
 
-      connect :: ServerName -> IO Connection
+    connect :: ServerName -> IO Connection
 
 * Geen statische informatie uit verbinding
 
@@ -188,11 +188,11 @@ Dependent Types
 
 * We kunnen veel preciezer zijn:
 
-  .. code-block:: agda
+.. code-block:: agda
 
-      Handle : Schema → Set
-      connect : ServerName → TableName → (s : Schema)
-                 → IO (Handle s)
+    Handle : Schema → Set
+    connect : ServerName → TableName → (s : Schema)
+               → IO (Handle s)
 
 
 Relational Algebra

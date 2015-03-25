@@ -170,9 +170,9 @@ Haskell
 
 * Eerst moeten we verbinden met een database, gewoonlijk:
 
-.. code-block:: haskell
-
-    connect :: ServerName -> IO Connection
+  .. code-block:: haskell
+  
+      connect :: ServerName -> IO Connection
 
 * Geen statische informatie uit verbinding
 
